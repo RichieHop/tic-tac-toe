@@ -10,19 +10,36 @@
 
 <body>
 
-    <div class="board"></div>
-        <div class="boardGridContainer">
-            <div class="boardCell cell0" id="cell0" data-index="0"></div>
-            <div class="boardCell cell1" id="cell1" data-index="1"></div>
-            <div class="boardCell cell2" id="cell2" data-index="2"></div>
-            <div class="boardCell cell3" id="cell3" data-index="3"></div>
-            <div class="boardCell cell4" id="cell4" data-index="4"></div>
-            <div class="boardCell cell5" id="cell5" data-index="5"></div>
-            <div class="boardCell cell6" id="cell6" data-index="6"></div>
-            <div class="boardCell cell7" id="cell7" data-index="7"></div>
-            <div class="boardCell cell8" id="cell8" data-index="8"></div>
-        </div>
+   <div class="container">
+     <h1 class="header">Tic Tac Toe</h1>
+     <div class="info">
+      <h1 class="playerOne">Player One 0</h1>
+      <h1> - </h1>
+      <h1 class="playerTwo">Player Two 0</h1>
     </div>
+    <h1 class="turn"></h1>   
+    <div class="board"></div>
+     <div class="winningMessage"></div>
+   </div>
+
+    <dialog id="gameOverDialog">
+    <form method="dialog">
+      <h1>Game Over</h1>
+      <p id ="gameOver"></p>
+      <div class="modalButtons">
+          <button autofocus id="gameOverButton" value="OK">OK</button>
+      </div>
+    </form>
+    </dialog>
+
+    <dialog id="cellContainsValueDialog">
+    <form method="dialog">
+      <h1>This cell already contains a value</h1>
+      <div class="modalButtons">
+        <button autofocus id="cellContainsValue" value="OK">OK</button>
+      </div>
+    </form>
+    </dialog>
 
 </body>
 

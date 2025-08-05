@@ -9,28 +9,61 @@ html{
 }
 
 body {
-    height: 95vh;
+    height: 90vh;
     width: 95vw;
+    box-sizing: border-box;
 }
 
-.boardGridContainer {
-    display: grid;
-    grid-template: 7.5rem 7.5rem 7.5rem / 7.5rem 7.5rem 7.5rem;
-    gap: 1px;
-    align-content: center;
-    justify-content: center;
-    text-align: center;
-    height: 95vh;
-    width: 95vw;
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-.boardGridContainer div{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-top: 1rem;
+  column-gap: 0.5rem;
 }
 
-.boardCell {
-    border: 1px solid black;
-    font-size: 5rem;
+.turn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.board {
+  display: grid;
+  height: 40vh;
+  width: 95vw;  
+  grid-template: 10rem 10rem 10rem / 10rem 10rem 10rem;
+  justify-content: center;
+  text-align: center;
+  gap: 2px;
+  padding-top: 1rem;
+}
+
+.winningMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: 600;
+  font-size: 2rem;
+  padding-top: 5rem;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 5rem;
+  border: 1px solid grey;
+  cursor: pointer;
 }

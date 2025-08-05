@@ -10,36 +10,36 @@
 
 <body>
 
-   <div class="container">
-     <h1 class="header">Tic Tac Toe</h1>
-     <div class="info">
-      <h1 class="playerOne">Player One 0</h1>
-      <h1> - </h1>
-      <h1 class="playerTwo">Player Two 0</h1>
-    </div>
-    <h1 class="turn"></h1>   
-    <div class="board"></div>
-     <div class="winningMessage"></div>
-   </div>
+  <div class="container">
+    <h1 class="header">Tic Tac Toe</h1>
+    <div class="info">
+    <h1 class="playerOne">Player One 0</h1>
+    <h1> - </h1>
+    <h1 class="playerTwo">Player Two 0</h1>
+  </div>
+  <h1 class="turn"></h1>   
+  <div class="board"></div>
+  </div>
 
-    <dialog id="gameOverDialog">
+  <dialog id="gameOverDialog">
     <form method="dialog">
-      <h1>Game Over</h1>
-      <p id ="gameOver"></p>
+      <p id = "heading">Game Over</p>
+      <p id = "winner"></p>
       <div class="modalButtons">
-          <button autofocus id="gameOverButton" value="OK">OK</button>
+          <button autofocus id="gameOverButton" value="new">New Game</button>
+          <button autofocus id="restartButton" value="restart">Restart</button>
       </div>
     </form>
-    </dialog>
+  </dialog>
 
-    <dialog id="cellContainsValueDialog">
+  <dialog id="cellContainsValueDialog">
     <form method="dialog">
-      <h1>This cell already contains a value</h1>
+      <p id="valueMessage">This cell already contains a value</p>
       <div class="modalButtons">
         <button autofocus id="cellContainsValue" value="OK">OK</button>
       </div>
     </form>
-    </dialog>
+  </dialog>
 
 </body>
 

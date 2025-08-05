@@ -102,7 +102,7 @@ function GameController(
 function ScreenController() {
   const game = GameController();
   const playerTurnDiv = document.querySelector('.turn');
-  const winningMessageDiv = document.querySelector('.winningMessage')
+  const winningMessageModal = document.getElementById('winner');
   const boardDiv = document.querySelector('.board');
 
   const updateScreen = () => {
@@ -165,11 +165,11 @@ function ScreenController() {
       gameOverDialog.showModal()
       gameOverDialog.addEventListener('click', (event) => {
         let element = event.target;
-        if (element.textContent === "OK") {
+        if (element.textContent === "New Game") {
           game.clearBoard()
           winningMessageDiv.textContent = ""
           checkGameOver = "";
-        }        
+        } else location.reload();     
       }, { once: true })
       e.preventDefault();
     }
@@ -188,37 +188,37 @@ function ScreenController() {
 
     // Check for a win on the 3 horizontal rows
     if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[1].textContent && boardValues[0].textContent === boardValues[2].textContent) {
-        winningMessageDiv.textContent = `${winningPlayer} wins with horizontal top!`
+        winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal top!`
         return winningPlayer;
     } else if (boardValues[3].textContent != "" && boardValues[3].textContent === boardValues[4].textContent && boardValues[3].textContent === boardValues[5].textContent) {
-        winningMessageDiv.textContent = `${winningPlayer} wins with horizontal middle!`
+        winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal middle!`
         return winningPlayer;
         } else if (boardValues[6].textContent != "" && boardValues[6].textContent === boardValues[7].textContent && boardValues[6].textContent === boardValues[8].textContent) {
-            winningMessageDiv.textContent = `${winningPlayer} wins with horizontal bottom!`
+            winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal bottom!`
             return winningPlayer;
             }
 
     // Check for a win on the 3 vertical rows
     if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[3].textContent && boardValues[0].textContent === boardValues[6].textContent) {
-        winningMessageDiv.textContent = `${winningPlayer} wins with vertical left!`
+        winningMessageModal.innerHTML = `${winningPlayer} wins with vertical left!`
         return winningPlayer;
     } else if (boardValues[1].textContent != "" && boardValues[1].textContent === boardValues[4].textContent && boardValues[1].textContent === boardValues[7].textContent) {
-        winningMessageDiv.textContent = `${winningPlayer} wins with vertical middle!`
+        winningMessageModal.innerHTML = `${winningPlayer} wins with vertical middle!`
         return winningPlayer;
         } else if (boardValues[2].textContent != "" && boardValues[2].textContent === boardValues[5].textContent && boardValues[2].textContent === boardValues[8].textContent) {
-            winningMessageDiv.textContent = `${winningPlayer} wins with vertical right!`
+            winningMessageModal.innerHTML = `${winningPlayer} wins with vertical right!`
             return winningPlayer;
             }
 
     // Check for a win on the left diagonal
     if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[4].textContent && boardValues[0].textContent === boardValues[8].textContent) {
-        winningMessageDiv.textContent = `${winningPlayer} wins with diagonal top left!`
+        winningMessageModal.innerHTML = `${winningPlayer} wins with diagonal top left!`
         return winningPlayer;
     }
 
     // Check for a win on the right diagonal
     if (boardValues[2].textContent != "" && boardValues[2].textContent === boardValues[4].textContent && boardValues[2].textContent === boardValues[6].textContent) {
-        winningMessageDiv.textContent = `${winningPlayer} wins with diagonal top right!`
+        winningMessageModal.innerHTML = `${winningPlayer} wins with diagonal top right!`
         return winningPlayer;
     }
 

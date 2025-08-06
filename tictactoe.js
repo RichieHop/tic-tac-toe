@@ -1,5 +1,36 @@
-let playerOneScore= 0;
-let playerTwoScore = 0;
+const playerOne = {id: "Player One", name: "Player One", token: "X", score: 0};
+const playerTwo = {id: "Player Two", name: "Player Two", token: "O", score: 0};
+
+function setPlayerNames() {
+  const playerTurnDiv = document.querySelector('.turn');
+  // Player name modal form constants
+  const playerNames = document.getElementById("setPlayerNames");
+  const jsCloseBtn = playerNames.querySelector("#js-close");
+  const normalCloseBtn = playerNames.querySelector("#normal-close");
+  playerNames.showModal();
+
+  normalCloseBtn.addEventListener("click", (e) => {
+    // Set player one name
+    if (player1.value != "") {
+      document.querySelector('.playerOne').innerHTML = player1.value + " (X) " + playerOne.score
+      playerOne.name = player1.value
+      playerTurnDiv.textContent = `${playerOne.name}'s turn...`;
+    }
+    // Set player two name
+    if (player2.value != "") {
+      document.querySelector('.playerTwo').innerHTML = player2.value + " (O) " + playerTwo.score
+      playerTwo.name = player2.value;
+    }
+    playerNames.close();
+  })
+
+  // Close and cancel the modal add book form
+  jsCloseBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    playerNames.close();
+  })
+
+}
 
 function Gameboard() {
   const rows = 3;
@@ -17,8 +48,8 @@ function Gameboard() {
 
   const dropToken = (row, column, player) => {
     board[row][column].addToken(player);
-  };
-
+    }
+  
   const clearBoard = () => {
     for (let i = 0; i < rows; i++) {
       board[i] = [];
@@ -87,6 +118,12 @@ function GameController(
   const getActivePlayer = () => activePlayer;
 
   const playRound = (row, column) => {
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
     board.dropToken(row, column, getActivePlayer().token);
     switchPlayerTurn();
   };
@@ -104,6 +141,7 @@ function ScreenController() {
   const playerTurnDiv = document.querySelector('.turn');
   const winningMessageModal = document.getElementById('winner');
   const boardDiv = document.querySelector('.board');
+  let currentPlayerName = "";
 
   const updateScreen = () => {
     // clear the board
@@ -114,7 +152,10 @@ function ScreenController() {
     const activePlayer = game.getActivePlayer();
 
     // Display player's turn
-    playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
+    if (activePlayer.name === "Player One") {
+      currentPlayerName = playerOne.name;
+    } else currentPlayerName = playerTwo.name;
+    playerTurnDiv.textContent = `${currentPlayerName}'s turn...`
 
     // Render board squares
     var rowNumber = -1;
@@ -126,6 +167,9 @@ function ScreenController() {
         cellButton.dataset.column = index;
         cellButton.dataset.row = rowNumber;
         cellButton.textContent = cell.getValue();
+        if (cellButton.textContent === "X") {
+          cellButton.style.color = "red";
+        } else cellButton.style.color = "blue";
         boardDiv.appendChild(cellButton);
       })
     })
@@ -154,11 +198,11 @@ function ScreenController() {
     let checkGameOver = checkForWinner();
     if (checkGameOver != undefined) {
       if (checkGameOver === "Player One") {
-        playerOneScore++ 
-        document.querySelector('.playerOne').innerHTML = "Player One " + playerOneScore;
-      } else {
-        playerTwoScore++
-        document.querySelector('.playerTwo').innerHTML = "Player Two " + playerTwoScore;
+        playerOne.score++
+        document.querySelector('.playerOne').innerHTML = playerOne.name + " (" + playerOne.token + ") " + playerOne.score;
+      } else if (checkGameOver === "Player Two") {
+        playerTwo.score++
+        document.querySelector('.playerTwo').innerHTML = playerTwo.name + " (" + playerTwo.token + ") " + playerTwo.score;
       }
       // Display modal game over dialog
       const gameOverDialog = document.getElementById('gameOverDialog')
@@ -167,7 +211,6 @@ function ScreenController() {
         let element = event.target;
         if (element.textContent === "New Game") {
           game.clearBoard()
-          winningMessageDiv.textContent = ""
           checkGameOver = "";
         } else location.reload();     
       }, { once: true })
@@ -179,47 +222,60 @@ function ScreenController() {
 
   function checkForWinner() {
     let winningPlayer = "";
+    let winningPlayerID = "";
     const boardValues = document.querySelectorAll(".cell");
     const board = game.getBoard();
     const activePlayer = game.getActivePlayer();
     if (activePlayer.name === "Player One") {
-       winningPlayer = "Player Two";
-    } else winningPlayer = "Player One";
+       winningPlayer = playerTwo.name
+       winningPlayerID = playerTwo.id;
+    } else {
+        winningPlayer = playerOne.name
+        winningPlayerID = playerOne.id;
+    }
 
     // Check for a win on the 3 horizontal rows
     if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[1].textContent && boardValues[0].textContent === boardValues[2].textContent) {
         winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal top!`
-        return winningPlayer;
+        return winningPlayerID;
     } else if (boardValues[3].textContent != "" && boardValues[3].textContent === boardValues[4].textContent && boardValues[3].textContent === boardValues[5].textContent) {
         winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal middle!`
-        return winningPlayer;
+        return winningPlayerID;
         } else if (boardValues[6].textContent != "" && boardValues[6].textContent === boardValues[7].textContent && boardValues[6].textContent === boardValues[8].textContent) {
             winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal bottom!`
-            return winningPlayer;
+            return winningPlayerID;
             }
 
     // Check for a win on the 3 vertical rows
     if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[3].textContent && boardValues[0].textContent === boardValues[6].textContent) {
         winningMessageModal.innerHTML = `${winningPlayer} wins with vertical left!`
-        return winningPlayer;
+        return winningPlayerID;
     } else if (boardValues[1].textContent != "" && boardValues[1].textContent === boardValues[4].textContent && boardValues[1].textContent === boardValues[7].textContent) {
         winningMessageModal.innerHTML = `${winningPlayer} wins with vertical middle!`
-        return winningPlayer;
+        return winningPlayerID;
         } else if (boardValues[2].textContent != "" && boardValues[2].textContent === boardValues[5].textContent && boardValues[2].textContent === boardValues[8].textContent) {
             winningMessageModal.innerHTML = `${winningPlayer} wins with vertical right!`
-            return winningPlayer;
+            return winningPlayerID;
             }
 
     // Check for a win on the left diagonal
     if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[4].textContent && boardValues[0].textContent === boardValues[8].textContent) {
         winningMessageModal.innerHTML = `${winningPlayer} wins with diagonal top left!`
-        return winningPlayer;
+        return winningPlayerID;
     }
 
     // Check for a win on the right diagonal
     if (boardValues[2].textContent != "" && boardValues[2].textContent === boardValues[4].textContent && boardValues[2].textContent === boardValues[6].textContent) {
         winningMessageModal.innerHTML = `${winningPlayer} wins with diagonal top right!`
-        return winningPlayer;
+        return winningPlayerID;
+    } else {
+        // If all cells used and no winner, it's a draw
+        if (boardValues[0].textContent != "" && boardValues[1].textContent != "" && boardValues[2].textContent != "" && boardValues[3].textContent != "" &&
+        boardValues[4].textContent != "" && boardValues[5].textContent != "" && boardValues[6].textContent != "" && boardValues[7].textContent != "" &&
+        boardValues[8].textContent != "" ) {
+          winningMessageModal.innerHTML = `It's a draw`
+          return "Draw";
+        }     
     }
 
   }
@@ -228,4 +284,5 @@ function ScreenController() {
   updateScreen();
 }
 
+setPlayerNames();
 ScreenController();

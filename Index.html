@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="tictactoe.js" defer></script>
+</head>
+
+<body>
+    
+    <div>
+        <h1 class="header">Tic Tac Toe</h1>
+        <div class="info">
+        <h1 class="playerOne">Player One (X) 0</h1>
+        <h1> vs </h1>
+        <h1 class="playerTwo">Computer (O) 0</h1>
+    </div>
+
+    <h1 class="turn"></h1>
+    
+    <div class="boardContainer">
+        <!-- <div id="board"> -->
+            <!-- <div id="rowOne"> -->
+                <button id="cell" data-row = 0 data-column = 0></button>
+                <button id="cell" data-row = 0 data-column = 1></button>
+                <button id="cell" data-row = 0 data-column = 2></button>
+            <!-- </div> -->
+            <!-- <div id="rowTwo"> -->
+                <button id="cell" data-row = 1 data-column = 0></button>
+                <button id="cell" data-row = 1 data-column = 1></button>
+                <button id="cell" data-row = 1 data-column = 2></button>
+            <!-- </div> -->
+            <!-- <div id="rowThree"> -->
+                <button id="cell" data-row = 2 data-column = 0></button>
+                <button id="cell" data-row = 2 data-column = 1></button>
+                <button id="cell" data-row = 2 data-column = 2></button>
+            <!-- </div> -->
+        <!-- </div>        -->
+    </div>
+    
+    <dialog id="setPlayerNames">
+        <form id="playerNames" method="dialog">
+            <p id = "heading">Enter Player Names</p>
+            <div>
+                <label for="player1">
+                    <span>Player One </span>
+                </label>
+                <input type="text" id="player1" name="player1" value = "Player One" />
+            </div>
+            <div>
+                <label for="player2">
+                    <span>Player Two </span>
+                </label>
+                <input type="text" id="player2" name="player2" value = "Computer" />
+                <p id = "player2Info">Change to another name for 2 player game.</p>
+            </div>
+            <div class="modalButtons">
+                <button autofocus id="normal-close" value="Add">Add</button>
+                <button id="js-close" value="Cancel">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="gameOverDialog">
+        <form method="dialog">
+        <p id = "heading">Game Over</p>
+        <p id = "winner"></p>
+        <div class="modalButtons">
+            <button autofocus id="gameOverButton" value="new">New Game</button>
+            <button id="restartButton" value="restart">Restart</button>
+        </div>
+        </form>
+    </dialog>
+
+    <dialog id="cellContainsValueDialog">
+        <form method="dialog">
+        <p id="valueMessage">This cell already contains a value</p>
+        <div class="modalButtons">
+            <button autofocus id="cellContainsValue" value="OK">OK</button>
+        </div>
+        </form>
+    </dialog>
+
+</body>
+
+</html>

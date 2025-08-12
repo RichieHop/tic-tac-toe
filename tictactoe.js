@@ -1,30 +1,47 @@
-const playerOne = {id: "Player One", name: "Player One", token: "X", score: 0};
-const playerTwo = {id: "Player Two", name: "Player Two", token: "O", score: 0};
+let winningLine = "";
+let board = [["", "", ""],["", "", ""],["", "", ""]];
+
+const winningMessageModal = document.getElementById('winner');
+const playerTurnDiv = document.querySelector('.turn');
+const players = [
+  {id: "Player One", name: "Player One", token: "X", score: 0},
+  {id: "Player Two", name: "Computer", token: "O", score: 0}
+]
+
+let currentPlayer = players[0].name;
+let currentToken = players[0].token;
+
+gameBoard().initialiseBoard();
+
+setPlayerNames();
+
+// ******************************************************************************************
 
 function setPlayerNames() {
-  const playerTurnDiv = document.querySelector('.turn');
   // Player name modal form constants
   const playerNames = document.getElementById("setPlayerNames");
   const jsCloseBtn = playerNames.querySelector("#js-close");
   const normalCloseBtn = playerNames.querySelector("#normal-close");
+
   playerNames.showModal();
 
   normalCloseBtn.addEventListener("click", (e) => {
     // Set player one name
     if (player1.value != "") {
-      document.querySelector('.playerOne').innerHTML = player1.value + " (X) " + playerOne.score
-      playerOne.name = player1.value
-      playerTurnDiv.textContent = `${playerOne.name}'s turn...`;
+      players[0].name = player1.value;
+      currentPlayer = players[0].name
+      document.querySelector('.playerOne').innerHTML = players[0].name + " (X) " + players[0].score;
+      playerTurnDiv.textContent = `${players[0].name}'s turn...`;
     }
     // Set player two name
     if (player2.value != "") {
-      document.querySelector('.playerTwo').innerHTML = player2.value + " (O) " + playerTwo.score
-      playerTwo.name = player2.value;
+      players[1].name = player2.value;
+      document.querySelector('.playerTwo').innerHTML = players[1].name + " (O) " + players[1].score;
     }
     playerNames.close();
   })
 
-  // Close and cancel the modal add book form
+  // Close and cancel the modal players form
   jsCloseBtn.addEventListener("click", (e) => {
     e.preventDefault();
     playerNames.close();
@@ -32,155 +49,70 @@ function setPlayerNames() {
 
 }
 
-function Gameboard() {
-  const rows = 3;
-  const columns = 3;
-  const board = [];
+// ******************************************************************************************
 
-  for (let i = 0; i < rows; i++) {
-    board[i] = [];
-    for (let j = 0; j < columns; j++) {
-      board[i].push(Cell());
-    }
+function gameBoard() {
+
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  const getBoard = () => board;
-
-  const dropToken = (row, column, player) => {
-    board[row][column].addToken(player);
-    }
-  
-  const clearBoard = () => {
-    for (let i = 0; i < rows; i++) {
-      board[i] = [];
-      for (let j = 0; j < columns; j++) {
-        board[i].push(Cell());
+  const playerMove = (row, column, token) => {
+    board[row][column] = token;
+    // Loop through the board array and add the values to the screen
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        let cellHTML = document.querySelector('[data-row="' + i + '"][data-column="' + j + '"]');
+        cellHTML.textContent = board[i][j];
       }
     }
-    const boardDiv = document.querySelector('.board');
-    boardDiv.textContent = "";
-    var rowNumber = -1;
-    board.forEach(row => {
-      rowNumber = ++rowNumber;
-      row.forEach((cell, index) => {
-        const cellButton = document.createElement("button");
-        cellButton.classList.add("cell");
-        cellButton.dataset.column = index;
-        cellButton.dataset.row = rowNumber;
-        cellButton.textContent = "";
-        cell.value = "";
-        boardDiv.appendChild(cellButton);
-      })
-    })  
   }
 
-  return { getBoard, dropToken, clearBoard };
-}
-
-function Cell() {
-  let value = "";
-
-  const addToken = (player) => {
-    value = player;
-  };
-
-  const getValue = () => value;
-
-  return {
-    addToken,
-    getValue
-  };
-}
-
-function GameController(
-  playerOneName = "Player One",
-  playerTwoName = "Player Two"
-) {
-  const board = Gameboard();
-  const clearBoard = board.clearBoard;
-
-  const players = [ 
-    {
-      name: playerOneName,
-      token: "X"
-    },
-    {
-      name: playerTwoName,
-      token: "O"
+  const checkForWin = () => {
+    if (gameController().isWin(board)) {
+      console.log(winningMessageModal);
+      if (winningMessageModal.textContent !== "It's a draw") {
+        if (currentPlayer === players[0].name) {
+          players[0].score++;
+          document.querySelector('.playerOne').innerHTML = players[0].name + " (" + players[0].token + ") " + players[0].score;
+        } else {
+          players[1].score++;
+          document.querySelector('.playerTwo').innerHTML = players[1].name + " (" + players[1].token + ") " + players[1].score;
+        }
+      }
+      // Display modal game over dialog
+      const gameOverDialog = document.getElementById('gameOverDialog')
+      gameOverDialog.showModal()
+      gameOverDialog.addEventListener('click', (event) => {
+        let element = event.target;
+        if (element.textContent === "New Game") {
+          initialiseBoard()
+        } else location.reload();     
+      }, { once: true })
+      // e.preventDefault();
+      return "Winner";
     }
-  ];
-
-  let activePlayer = players[0];
-
-  const switchPlayerTurn = () => {
-    activePlayer = activePlayer === players[0] ? players[1] : players[0];
-  };
-  const getActivePlayer = () => activePlayer;
-
-  const playRound = (row, column) => {
-    function getRandomInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-
-    board.dropToken(row, column, getActivePlayer().token);
-    switchPlayerTurn();
-  };
-
-  return {
-    playRound,
-    getActivePlayer,
-    getBoard: board.getBoard,
-    clearBoard
-  };
-}
-
-function ScreenController() {
-  const game = GameController();
-  const playerTurnDiv = document.querySelector('.turn');
-  const winningMessageModal = document.getElementById('winner');
-  const boardDiv = document.querySelector('.board');
-  let currentPlayerName = "";
-
-  const updateScreen = () => {
-    // clear the board
-    boardDiv.textContent = "";
-
-    // get the newest version of the board and player turn
-    const board = game.getBoard();
-    const activePlayer = game.getActivePlayer();
-
-    // Display player's turn
-    if (activePlayer.name === "Player One") {
-      currentPlayerName = playerOne.name;
-    } else currentPlayerName = playerTwo.name;
-    playerTurnDiv.textContent = `${currentPlayerName}'s turn...`
-
-    // Render board squares
-    var rowNumber = -1;
-    board.forEach(row => {
-      rowNumber = ++rowNumber;
-      row.forEach((cell, index) => {
-        const cellButton = document.createElement("button");
-        cellButton.classList.add("cell");
-        cellButton.dataset.column = index;
-        cellButton.dataset.row = rowNumber;
-        cellButton.textContent = cell.getValue();
-        if (cellButton.textContent === "X") {
-          cellButton.style.color = "red";
-        } else cellButton.style.color = "blue";
-        boardDiv.appendChild(cellButton);
-      })
-    })
   }
 
-  // Add event listener for the board
-  function clickHandlerBoard(e) {
+  // Initialise the board
+  const initialiseBoard = () => {
+    board = [["", "", ""],["", "", ""],["", "", ""]];
+    // Loop through the board array and add the values to the screen
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        let cellHTML = document.querySelector('[data-row="' + i + '"][data-column="' + j + '"]');
+        cellHTML.textContent = board[i][j];
+        // Add event listeners for board cell
+        cellHTML.addEventListener("click", clickHandlerCell);
+      }
+    }
+  }
+
+  function clickHandlerCell(e) {
     const selectedColumn = e.target.dataset.column;
     const selectedRow = e.target.dataset.row;
-    // Make sure a cell is clicked and not the gaps in between
-    if (!selectedColumn || !selectedRow) return;
     // Check if the cell already contains something
     var tokenCell = document.querySelector("[data-column='" + selectedColumn + "'][data-row='" + selectedRow + "']");
     if(tokenCell.innerHTML !== "") {
@@ -192,97 +124,103 @@ function ScreenController() {
       e.preventDefault();
       return;
     }
-    game.playRound(selectedRow, selectedColumn);
-    updateScreen();
-    checkForWinner();
-    let checkGameOver = checkForWinner();
-    if (checkGameOver != undefined) {
-      if (checkGameOver === "Player One") {
-        playerOne.score++
-        document.querySelector('.playerOne').innerHTML = playerOne.name + " (" + playerOne.token + ") " + playerOne.score;
-      } else if (checkGameOver === "Player Two") {
-        playerTwo.score++
-        document.querySelector('.playerTwo').innerHTML = playerTwo.name + " (" + playerTwo.token + ") " + playerTwo.score;
-      }
-      // Display modal game over dialog
-      const gameOverDialog = document.getElementById('gameOverDialog')
-      gameOverDialog.showModal()
-      gameOverDialog.addEventListener('click', (event) => {
-        let element = event.target;
-        if (element.textContent === "New Game") {
-          game.clearBoard()
-          checkGameOver = "";
-        } else location.reload();     
-      }, { once: true })
-      e.preventDefault();
-    }
-  }
 
-  boardDiv.addEventListener("click", clickHandlerBoard);
-
-  function checkForWinner() {
-    let winningPlayer = "";
-    let winningPlayerID = "";
-    const boardValues = document.querySelectorAll(".cell");
-    const board = game.getBoard();
-    const activePlayer = game.getActivePlayer();
-    if (activePlayer.name === "Player One") {
-       winningPlayer = playerTwo.name
-       winningPlayerID = playerTwo.id;
-    } else {
-        winningPlayer = playerOne.name
-        winningPlayerID = playerOne.id;
-    }
-
-    // Check for a win on the 3 horizontal rows
-    if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[1].textContent && boardValues[0].textContent === boardValues[2].textContent) {
-        winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal top!`
-        return winningPlayerID;
-    } else if (boardValues[3].textContent != "" && boardValues[3].textContent === boardValues[4].textContent && boardValues[3].textContent === boardValues[5].textContent) {
-        winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal middle!`
-        return winningPlayerID;
-        } else if (boardValues[6].textContent != "" && boardValues[6].textContent === boardValues[7].textContent && boardValues[6].textContent === boardValues[8].textContent) {
-            winningMessageModal.innerHTML = `${winningPlayer} wins with horizontal bottom!`
-            return winningPlayerID;
-            }
-
-    // Check for a win on the 3 vertical rows
-    if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[3].textContent && boardValues[0].textContent === boardValues[6].textContent) {
-        winningMessageModal.innerHTML = `${winningPlayer} wins with vertical left!`
-        return winningPlayerID;
-    } else if (boardValues[1].textContent != "" && boardValues[1].textContent === boardValues[4].textContent && boardValues[1].textContent === boardValues[7].textContent) {
-        winningMessageModal.innerHTML = `${winningPlayer} wins with vertical middle!`
-        return winningPlayerID;
-        } else if (boardValues[2].textContent != "" && boardValues[2].textContent === boardValues[5].textContent && boardValues[2].textContent === boardValues[8].textContent) {
-            winningMessageModal.innerHTML = `${winningPlayer} wins with vertical right!`
-            return winningPlayerID;
-            }
-
-    // Check for a win on the left diagonal
-    if (boardValues[0].textContent != "" && boardValues[0].textContent === boardValues[4].textContent && boardValues[0].textContent === boardValues[8].textContent) {
-        winningMessageModal.innerHTML = `${winningPlayer} wins with diagonal top left!`
-        return winningPlayerID;
-    }
-
-    // Check for a win on the right diagonal
-    if (boardValues[2].textContent != "" && boardValues[2].textContent === boardValues[4].textContent && boardValues[2].textContent === boardValues[6].textContent) {
-        winningMessageModal.innerHTML = `${winningPlayer} wins with diagonal top right!`
-        return winningPlayerID;
-    } else {
-        // If all cells used and no winner, it's a draw
-        if (boardValues[0].textContent != "" && boardValues[1].textContent != "" && boardValues[2].textContent != "" && boardValues[3].textContent != "" &&
-        boardValues[4].textContent != "" && boardValues[5].textContent != "" && boardValues[6].textContent != "" && boardValues[7].textContent != "" &&
-        boardValues[8].textContent != "" ) {
-          winningMessageModal.innerHTML = `It's a draw`
-          return "Draw";
-        }     
+    // Place the token in the clicked cell
+    playerMove(selectedRow, selectedColumn, currentToken);
+    const isWinner = checkForWin();
+    if (isWinner !== "Winner" && players[1].name === "Computer") {
+      gameController().switchPlayerTurn();
+      // Auto generate the computer move
+      let moveRow = 0, moveColumn = 0;
+      do {
+        moveRow = getRandomInt(0, 2);
+        moveColumn = getRandomInt(0, 2);
+        // Check if the cell already contains something
+        var tokenCell = document.querySelector("[data-column='" + moveColumn + "'][data-row='" + moveRow + "']");
+      } while (tokenCell.innerHTML !== "");
+      playerMove(moveRow, moveColumn, currentToken);
+      checkForWin();
+      gameController().switchPlayerTurn();
+    } else if (isWinner !== "Winner" && players[1].name !== "Computer") {
+        gameController().switchPlayerTurn();
     }
 
   }
 
-  // Initial render
-  updateScreen();
+  return { playerMove, checkForWin, initialiseBoard };
+
 }
 
-setPlayerNames();
-ScreenController();
+// ******************************************************************************************
+
+function gameController() {
+
+  // Check the horizontal, vertical and diagonal rows for 3 matching tokens
+  function checkVertical(board){
+    for(i = 0; i < 3; ++i) {
+      if (board[0][i] !== "" && board[0][i] === board[1][i] && board[0][i] === board[2][i]) {
+        winningLine = `${board[0][i]} in column ${i} vertical.`;
+        winningMessageModal.innerHTML = `${currentPlayer} wins with vertical row!`
+        return true;}
+      }
+    return false;
+  }
+
+  function checkHorizontal(board){
+    for(i = 0; i < 3; ++i) {
+      if (board[i][0] !== "" && board[i][0] === board[i][1] && board[i][0] === board[i][2]) {
+        winningLine = `${board[0][i]} in row ${i} horizontal.`;
+        winningMessageModal.innerHTML = `${currentPlayer} wins with horizontal row!`
+        return true;}
+      }
+    return false;
+  }
+
+  function checkDiagonalLeft(board){
+    if (board[0][0] !== "" && board[0][0] === board[1][1] && board[0][0] === board[2][2]) {
+      winningLine = `${board[0][0]} in left diagonal.`;
+      winningMessageModal.innerHTML = `${currentPlayer} wins with diagonal left!`
+      return true;}  
+    return false;
+  }
+
+  function checkDiagonalRight(board){
+    if (board[0][2] !== "" && board[0][2] === board[1][1] && board[0][2] === board[2][0]) {
+      winningLine = `${board[0][2]} in right diagonal.`;
+      winningMessageModal.innerHTML = `${currentPlayer} wins with diagonal right!`
+      return true;
+    }    
+    return false;
+  }
+
+  function checkForDraw(board) {
+    // If all cells used and no winner, it's a draw
+    if (!board[0].includes("") && !board[1].includes("") && !board[2].includes("") ) {
+      winningMessageModal.innerHTML = `It's a draw`
+      return true;
+    }
+  }
+
+  function isWin(board) {
+  return checkVertical(board) 
+    || checkHorizontal(board)
+    || checkDiagonalLeft(board)
+    || checkDiagonalRight(board)
+    || checkForDraw(board);
+  }
+
+  const switchPlayerTurn = () => {
+    if (currentPlayer === players[0].name) {
+      playerTurnDiv.textContent = `${players[1].name}'s turn...`;
+      currentPlayer = players[1].name
+      currentToken = players[1] .token;
+    } else {
+      playerTurnDiv.textContent = `${players[0].name}'s turn...`;
+      currentPlayer = players[0].name
+      currentToken = players[0] .token;
+    }
+  };
+
+return { winningLine, isWin, switchPlayerTurn };
+
+}
